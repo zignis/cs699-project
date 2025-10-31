@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block title %}Ask a Question{% endblock %} {% block
+content %}
+<h2>Ask a New Question</h2>
+
+<form method="POST" action="{{ url_for('qna.ask') }}">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.title.label }}<br />
+        {{ form.title(size=60) }}
+    </div>
+    <div>
+        {{ form.body.label }}<br />
+        {{ form.body(rows=6, cols=60) }}
+    </div>
+    <div>
+        {{ form.tags.label }}<br />
+        {{ form.tags(size=60) }}
+        <small>Separate tags with commas</small>
+    </div>
+    <div>{{ form.submit(class='btn') }}</div>
+</form>
+{% endblock %}

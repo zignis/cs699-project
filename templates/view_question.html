@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block title %}{{ question.title }}{% endblock %} {%
+block content %}
+
+<h2>{{ question.title }}</h2>
+<p>{{ question.body }}</p>
+<small
+    >Asked by {{ question.author.username }} on {{
+    question.timestamp.strftime('%d %b %Y %H:%M') }}</small
+>
+
+<div class="tags">
+    {% for tag in question.tags %}
+    <span class="tag">{{ tag.name }}</span>
+    {% endfor %}
+</div>
+
+<hr />
+<h3>Answers</h3>
+{% for answer in question.answers %}
+<div class="answer">
+    <p>{{ answer.body }}</p>
+    <small
+        >Answered by {{ answer.author.username }} on {{
+        answer.timestamp.strftime('%d %b %Y %H:%M') }}</small
+    >
+</div>
+{% else %}
+<p>No answers yet.</p>
+{% endfor %} {% if current_user.is_authenticated %}
+<hr />
+<h3>Your answer</h3>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>{{ form.body(rows=4, cols=60) }}</div>
+    <div>{{ form.submit(class='btn') }}</div>
+</form>
+{% else %}
+<p><a href="{{ url_for('auth.login') }}">Login</a> to post an answer.</p>
+{% endif %} {% endblock %}

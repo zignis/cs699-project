@@ -1,8 +1,30 @@
-# cs699-project
+# Question and answer server for institute members
 
-Website title/name - Insti Q&A
+A web application where users can ask questions, give answers, vote, and tag content for easy search.
 
-Basic Features 
- 1. Ask questions, give answers, vote 
- 2. Tags + search/filter 
- 3. Login
+# Tech stack
+
+- Backend: Python, Flask
+- Frontend: HTML + CSS (based on [Stacks](https://stackoverflow.design/) design system)
+- Data models and routes in `models/` and `routes/` folders
+- Static assets in `static/`, HTML templates in `templates/`
+- Setup tools: `create_db.py`, `config.py`, `extensions.py`
+- Dependencies listed in `requirements.txt`
+
+# Running
+
+- install dependencies:
+```shell
+pip install -r requirements.txt
+```
+
+- make changes as needed in config.py
+- create tables:
+```shell
+python create_db.py
+```
+
+- run the app:
+```shell
+python app.py
+```

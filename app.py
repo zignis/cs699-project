@@ -6,6 +6,8 @@ from config import Config
 from routes import main, auth, qna, vote, user
 from models import Question, Answer, Vote, Tag
 
+
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -58,3 +60,6 @@ def inject_sidebar_data():
         popular_tags=popular_tags,
         popular_users=[dict(username=u.username, answer_count=count) for u, count in popular_users]
     )
+    
+if __name__ == "__main__":
+    app.run(debug=True)

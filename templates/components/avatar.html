@@ -1,0 +1,8 @@
+{% macro Avatar(user, class="") %}
+<img class="{{ class }} of-cover"
+     src="{% if user.avatar %}
+            {{ url_for('static', filename='user_assets/' ~ user.avatar) }}
+          {% else %}
+            {{ url_for('static', filename='default_avatar.png') }}
+          {% endif %}">
+{% endmacro %}

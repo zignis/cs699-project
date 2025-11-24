@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "components/question_card.html" import QuestionCard with context %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="d-flex ai-center jc-space-between mb12">
+    <div class="fs-body3 flex--item fl1 mr12">
+        {{ question_count }} questions
+    </div>
+    <div class="s-btn-group flex--item">
+        <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'newest' }}" href="/?tab=newest">
+            <span class="s-btn--text" data-text="Newest">Newest</span>
+        </a>
+        <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'unanswered' }}" href="/?tab=unanswered">
+            <span class="s-btn--text" data-text="Unanswered">Unanswered</span>
+        </a>
+        <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'trending' }}" href="/?tab=trending">
+            <span class="s-btn--text" data-text="Trending">Trending</span>
+        </a>
+    </div>
+</div>
+
+<div>
+    {% for q in questions %}
+        {{ QuestionCard(q) }}
+    {% else %}
+        <p class="fs-body2">No questions yet. <a href="{{ url_for('qna.ask') }}">Ask one</a></p>
+    {% endfor %}
+</div>
+
+{% endblock %}

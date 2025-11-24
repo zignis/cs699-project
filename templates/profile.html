@@ -1,0 +1,30 @@
+{% from "components/avatar.html" import Avatar with context %}
+{% extends "base.html" %}
+{% block title %}{{ user.username }}{% endblock %}
+{% block content %}
+
+<div class="d-flex fd-row g32">
+    {{ Avatar(user, "s-avatar s-avatar__128") }}
+
+    <div class="w100">
+        <h1 class="fs-headline1">{{ user.username }}</h1>
+        <p class="mt8 tc-black-350">Joined: {{ user.timestamp.strftime('%b %d, %Y') }}</p>
+
+        <div class="mt16 d-flex fd-row g8 w100">
+            <div class="s-card fl-grow1">
+                <h2 class="fs-body3 lh-sm fc-dark">{{ answer_count }}</h2>
+                <p class="fs-body1 fc-medium">answers</p>
+            </div>
+            <div class="s-card fl-grow1">
+                <h2 class="fs-body3 lh-sm fc-dark">{{ question_count }}</h2>
+                <p class="fs-body1 fc-medium">questions</p>
+            </div>
+            <div class="s-card fl-grow1">
+                <h2 class="fs-body3 lh-sm fc-dark">{{ vote_count }}</h2>
+                <p class="fs-body1 fc-medium">votes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

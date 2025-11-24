@@ -1,0 +1,205 @@
+{% from "components/avatar.html" import Avatar with context %}
+{% extends "base.html" %}
+{% block title %}{{ question.title }}{% endblock %}
+{% block content %}
+
+<style>
+    .readonly-editor .s-editor-shadow {
+        display: none !important;
+    }
+
+    .readonly-editor .s-textarea {
+        background: none !important;
+        border: none !important;
+        color: inherit !important;
+        resize: none !important;
+    }
+
+    .readonly-editor .ProseMirror code,
+    .readonly-editor .ProseMirror pre {
+        opacity: 100% !important;
+    }
+</style>
+
+<!-- highlight.js -->
+<script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+<!-- editor -->
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+
+<section>
+    <div class="s-page-title mb24">
+        <h1 class="s-page-title--header">{{ question.title }}</h1>
+    </div>
+    <div class="d-flex fd-row g16">
+        {% if current_user.is_authenticated %}
+            <div class="d-flex fd-column ai-center">
+                <form method="POST" action="{{ url_for('vote.vote_question', id=question.id, value=1) }}">
+                    <button class="s-btn s-btn__sm s-btn__muted s-btn__outlined s-btn__icon br-lg">
+                        <svg class="svg-icon iconArrowUpLg" width="22" height="22" viewBox="0 0 36 36"><path d="M18 10.5 7.5 21h21L18 10.5z"></path></svg>
+                    </button>
+                </form>
+
+                <span class="fs-body3 fw-bold my8">{{ question.score }}</span>
+
+                <form method="POST" action="{{ url_for('vote.vote_question', id=question.id, value=-1) }}">
+                    <button class="s-btn s-btn__sm s-btn__muted s-btn__outlined s-btn__icon br-lg">
+                        <svg class="svg-icon iconArrowDownLg" width="22" height="22" viewBox="0 0 36 36"><path d="M18 25.5 28.5 15H7.5l10.5 10.5z"></path></svg>
+                    </button>
+                </form>
+
+                {% if current_user.is_authenticated and current_user.id == question.user_id %}
+                    <form method="POST" class="mt24" action="{{ url_for('qna.delete_question', id=question.id) }}"
+                          onsubmit="return confirm('Delete this question?');">
+                        <button class="s-btn s-btn__danger s-btn__sm">Delete</button>
+                    </form>
+                {% endif %}
+
+            </div>
+        {% endif %}
+        <div id="question-body" class="readonly-editor mb12"></div>
+    </div>
+    <div class="d-flex">
+        <div class="d-flex g4" style="flex-wrap: wrap; height: fit-content;">
+            {% for tag in question.tags %}
+                <a class="s-tag s-tag__sm" href="#">{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+        <div class="s-user-card s-user-card__highlighted" style="width: fit-content; margin-left: auto">
+            <time class="s-user-card--time">{{ question.timestamp.strftime('%d %b %Y %H:%M') }}</time>
+            <a href="#" class="s-avatar s-avatar__32 s-user-card--avatar">
+                {{ Avatar(question.author, "s-avatar--image") }}
+            </a>
+            <div class="s-user-card--info">
+                <a href="#" class="s-user-card--link">{{ question.author.username }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bt bc-black-200 mt32">
+    <div class="d-flex fd-row ai-center jc-space-between mt24 w100">
+        <h2 class="fs-subheading fw-normal">
+            {{ question.answers | length }} answers
+        </h2>
+        <div class="s-btn-group flex--item">
+            <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'votes' }}" href="{{ url_for('qna.view_question', id=question.id, tab='votes') }}">
+                <span class="s-btn--text" data-text="Move voted">Most voted</span>
+            </a>
+            <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'newest' }}" href="{{ url_for('qna.view_question', id=question.id, tab='newest') }}">
+                <span class="s-btn--text" data-text="Newest">Newest</span>
+            </a>
+        </div>
+    </div>
+
+    {% if answers | length > 0 %}
+        {% for answer in answers %}
+            <div class="d-flex fd-row mt32 mb64 pb8 bb bc-black-200 w100 g16">
+                {% if current_user.is_authenticated %}
+                <div class="d-flex fd-column ai-center">
+                    <form method="POST" action="{{ url_for('vote.vote_answer', id=answer.id, value=1) }}">
+                        <button class="s-btn s-btn__sm s-btn__muted s-btn__outlined s-btn__icon br-lg">
+                            <svg class="svg-icon iconArrowUpLg" width="22" height="22" viewBox="0 0 36 36"><path d="M18 10.5 7.5 21h21L18 10.5z"></path></svg>
+                        </button>
+                    </form>
+
+                    <span class="fs-body3 fw-bold my8">{{ answer.score }}</span>
+
+                    <form method="POST" action="{{ url_for('vote.vote_answer', id=answer.id, value=-1) }}">
+                        <button class="s-btn s-btn__sm s-btn__muted s-btn__outlined s-btn__icon br-lg">
+                            <svg class="svg-icon iconArrowDownLg" width="22" height="22" viewBox="0 0 36 36"><path d="M18 25.5 28.5 15H7.5l10.5 10.5z"></path></svg>
+                        </button>
+                    </form>
+
+                    {% if current_user.is_authenticated and current_user.id == answer.user_id %}
+                        <form method="POST" class="mt32" action="{{ url_for('qna.delete_answer', answer_id=answer.id) }}"
+                              onsubmit="return confirm('Delete this answer?');">
+                            <button class="s-btn s-btn__danger s-btn__sm mt12">Delete</button>
+                        </form>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+                <div class="fl-grow1">
+                    <div class="readonly-editor" id="answer-body-{{ answer.id }}"></div>
+                    <script>
+                        new window.stacksEditor.StacksEditor(
+                            document.querySelector("#answer-body-{{ answer.id }}"),
+                            {{ answer.body | tojson | safe }},
+                        {}
+                        ).disable();
+                    </script>
+
+                    <div class="s-user-card" style="width: fit-content; margin-left: auto">
+                        <time class="s-user-card--time">{{ answer.timestamp.strftime('%d %b %Y %H:%M') }}</time>
+                        <a href="{{ url_for('user.profile', username=answer.author.username) }}" class="s-avatar s-avatar__32 s-user-card--avatar">
+                            {{ Avatar(answer.author, "s-avatar--image") }}
+                        </a>
+                        <div class="s-user-card--info">
+                            <a href="{{ url_for('user.profile', username=answer.author.username) }}" class="s-user-card--link">{{ answer.author.username }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="fs-body2 mt16 mb32 pb32 bb bc-black-200">No answers yet.</p>
+    {% endif %}
+</section>
+
+{% if suggested_resources %}
+    <section class="my48 px32 pb64 bb bc-black-200">
+        <h2 class="fs-subheading fw-normal mb12">Suggested resources</h2>
+        <ul class="s-list">
+            {% for item in suggested_resources %}
+                <li class="mb12">
+                    <a href="{{ item.url }}" class="fs-body2 fw-bold" target="_blank">{{ item.title }}</a>
+                    <p class="fs-body2">{{ item.snippet }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}
+
+<section class="d-flex fd-column ai-stretch my32 w100">
+    <h2 class="fs-subheading fw-normal">Your answer</h2>
+    {% if current_user.is_authenticated %}
+        <form method="POST" id="answer-form" novalidate>
+            {{ form.hidden_tag() }}
+            <div id="answer-editor-container"></div>
+            {{ form.body(class="visually-hidden") }}
+            {{ form.submit(class="s-btn s-btn__filled mt16", style="width: fit-content; margin-left: auto") }}
+        </form>
+    {% else %}
+        <p class="fs-body2"><a href="{{ url_for('auth.login') }}">Login</a> to post an answer.</p>
+    {% endif %}
+</section>
+
+<!-- init editor -->
+<script>
+    // read-only editor
+    new window.stacksEditor.StacksEditor(
+        document.querySelector("#question-body"),
+        {{ question.body | tojson | safe }},
+        {}
+    ).disable();
+
+    // answer editor
+    const textarea = document.getElementById("{{ form.body.id }}");
+    const form = document.getElementById("answer-form");
+
+    window.editor = new window.stacksEditor.StacksEditor(
+        document.querySelector("#answer-editor-container"),
+        "",
+        {
+            placeholderText: "Answer details...",
+        }
+    );
+
+    form.addEventListener("submit", () => {
+        if (textarea) {
+            textarea.value = window.editor.content;
+        }
+    });
+</script>
+
+{% endblock %}

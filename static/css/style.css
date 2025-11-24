@@ -1,0 +1,28 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+main {
+    max-width: 70vw;
+    margin-inline: auto;
+    min-height: calc(100vh - 52px);
+}
+
+.visually-hidden {
+    position: absolute;
+    left: -99999px;
+}
+
+@media screen and (max-width: 600px) {
+    main {
+        max-width: 100%;
+    }
+}
+

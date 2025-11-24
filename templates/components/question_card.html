@@ -1,0 +1,69 @@
+{% from "components/avatar.html" import Avatar with context %}
+
+{% macro QuestionCard(q) %}
+<div class="s-post-summary mb16">
+    {% if current_user.is_authenticated %}
+        <div class="d-flex fd-column ai-center">
+        <form method="POST" action="{{ url_for('vote.vote_question', id=q.id, value=1) }}">
+            <button class="s-btn s-btn__sm s-btn__muted s-btn__outlined s-btn__icon br-lg p4 w28 h28">
+                <svg class="svg-icon iconArrowUpLg" width="22" height="22" viewBox="0 0 36 36"><path d="M18 10.5 7.5 21h21L18 10.5z"></path></svg>
+            </button>
+        </form>
+
+        <span class="fs-body3 fw-bold my8">{{ q.score }}</span>
+
+        <form method="POST" action="{{ url_for('vote.vote_question', id=q.id, value=-1) }}">
+            <button class="s-btn s-btn__sm s-btn__muted s-btn__outlined s-btn__icon br-lg p4 w28 h28">
+                <svg class="svg-icon iconArrowDownLg" width="22" height="22" viewBox="0 0 36 36"><path d="M18 25.5 28.5 15H7.5l10.5 10.5z"></path></svg>
+            </button>
+        </form>
+
+    </div>
+    {% endif %}
+    <!--    -->
+    <div class="s-post-summary--stats">
+        <div class="s-post-summary--stats-item s-post-summary--stats-item__emphasized">
+            <span class="s-post-summary--stats-item-number">{{ q.score }}</span>
+            <span class="s-post-summary--stats-item-unit">votes</span>
+        </div>
+
+        <div class="s-post-summary--stats-item {% if q.answers|length > 0 %}has-answers has-accepted-answer{% endif %}">
+            <span class="s-post-summary--stats-item-number">{{ q.answers | length }}</span>
+            <span class="s-post-summary--stats-item-unit">answers</span>
+        </div>
+
+        <div class="s-post-summary--stats-item is-warm">
+            <span class="s-post-summary--stats-item-number">{{ q.view_count }}</span>
+            <span class="s-post-summary--stats-item-unit">views</span>
+        </div>
+    </div>
+    <!--    -->
+    <div class="s-post-summary--content">
+        <h3 class="s-post-summary--content-title">
+            <a href="{{ url_for('qna.view_question', id=q.id) }}">{{ q.title }}</a>
+        </h3>
+
+        <p class="s-post-summary--content-excerpt">
+            {{ q.body[:200] }}{% if q.body|length > 200 %}...{% endif %}
+        </p>
+
+        <div class="s-post-summary--meta">
+            <div class="s-post-summary--meta-tags">
+                {% for tag in q.tags %}
+                <a class="s-tag" href="#">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+
+            <div class="s-user-card s-user-card__minimal">
+                <a href="{{ url_for('user.profile', username=q.author.username) }}" class="s-avatar s-user-card--avatar">
+                    {{ Avatar(q.author, "s-avatar--image") }}
+                </a>
+                <a href="{{ url_for('user.profile', username=q.author.username) }}" class="s-user-card--link">{{ q.author.username }}</a>
+                <time class="s-user-card--time">
+                    asked on {{ q.timestamp.strftime('%d %b %Y %H:%M') }}
+                </time>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}

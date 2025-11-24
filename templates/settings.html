@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "components/avatar.html" import Avatar with context %}
+{% block title %}Account settings{% endblock %}
+{% block content %}
+
+<div class="s-page-title mb24">
+    <h1 class="s-page-title--header">
+        Settings
+    </h1>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="d-flex fd-column g16">
+    {{ form.hidden_tag() }}
+
+    <div class="d-flex gy4 fd-column">
+        <label class="s-label" for="{{ form.username.id }}">
+            {{ form.username.label.text }}
+            {% if form.username.flags.required %}
+            <abbr class="s-required-symbol" title="required">*</abbr>
+            {% endif %}
+        </label>
+        {{ form.username(class="s-input") }}
+    </div>
+
+    <label class="s-label fw-bold mt16">Avatar</label>
+    <div class="d-flex g16">
+        {{ Avatar(current_user, "s-avatar s-avatar__128") }}
+        <div class="d-flex fd-column g8">
+            {{ form.avatar(class="s-input") }}
+            <div class="d-flex fd-row ai-center g8">
+                {{ form.remove_avatar }}
+                <label for="{{ form.remove_avatar.id }}" class="fc-red-500">Remove current avatar</label>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="fs-title mt32 mb8">Change password</h2>
+
+    <div class="d-flex gy4 fd-column">
+        <label class="s-label" for="{{ form.current_password.id }}">
+            {{ form.current_password.label.text }}
+            {% if form.current_password.flags.required %}
+            <abbr class="s-required-symbol" title="required">*</abbr>
+            {% endif %}
+        </label>
+        {{ form.current_password(class="s-input") }}
+    </div>
+
+    <div class="d-flex gy4 fd-column">
+        <label class="s-label" for="{{ form.new_password.id }}">
+            {{ form.new_password.label.text }}
+            {% if form.new_password.flags.required %}
+            <abbr class="s-required-symbol" title="required">*</abbr>
+            {% endif %}
+        </label>
+        {{ form.new_password(class="s-input") }}
+    </div>
+
+    <div class="d-flex gy4 fd-column">
+        <label class="s-label" for="{{ form.confirm_password.id }}">
+            {{ form.confirm_password.label.text }}
+            {% if form.confirm_password.flags.required %}
+            <abbr class="s-required-symbol" title="required">*</abbr>
+            {% endif %}
+        </label>
+        {{ form.confirm_password(class="s-input") }}
+    </div>
+
+    {{ form.submit(class="s-btn s-btn__filled mt16", style="width: fit-content; margin-left: auto") }}
+</form>
+
+{% endblock %}

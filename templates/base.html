@@ -1,0 +1,171 @@
+{% from "components/avatar.html" import Avatar with context %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}{% endblock %} | Q&A site</title>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/stacks.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}">
+    </head>
+    <body class="ff-sans">
+    <header class="s-topbar ps-sticky" style="top: 0;">
+            <div class="s-topbar--container">
+                <a class="s-topbar--menu-btn" href="{{ url_for('main.index') }}">Home</a>
+
+                {% if current_user.is_authenticated %}
+                <nav>
+                    <ol class="s-navigation">
+                        <li>
+                            <a href="{{ url_for('qna.ask') }}" class="s-navigation--item is-selected">
+                                <span class="s-navigation--item-text" data-text="Ask question">Ask a question</span>
+                            </a>
+                        </li>
+                    </ol>
+                </nav>
+                {% endif %}
+
+                <form id="search" class="s-topbar--searchbar mx32" autocomplete="off" role="search" method="GET" action="{{ url_for('main.search') }}">
+                    <div class="s-topbar--searchbar--input-group">
+                        <input name="q" type="text" placeholder="Search…" value="" autocomplete="off" class="s-input s-input__search" />
+                        <svg data-icon="IconSearch" class="s-input-icon s-input-icon__search svg-icon"></svg>
+                    </div>
+                </form>
+
+                <nav class="s-topbar--navigation">
+                    <ol class="s-topbar--content mr16">
+                        {% if current_user.is_authenticated %}
+                            <li class="mr4">
+                                <div class="s-user-card">
+                                    <a href="{{ url_for('user.settings') }}" class="s-avatar s-avatar__32 s-user-card--avatar">
+                                        {{ Avatar(current_user, "s-avatar--image") }}
+                                    </a>
+                                    <div class="s-user-card--info">
+                                        <a href="{{ url_for('user.settings') }}" class="s-user-card--link">{{ current_user.username }}</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('auth.logout') }}" class="s-topbar--item s-topbar--item__unset s-btn s-btn__outlined">Logout</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ url_for('auth.login') }}" class="s-topbar--item s-topbar--item__unset s-btn s-btn__outlined">Login</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('auth.register') }}" class="s-topbar--item s-topbar--item__unset ml4 s-btn s-btn__filled">Register</a>
+                            </li>
+                        {% endif %}
+                    </ol>
+                </nav>
+            </div>
+        </header>
+
+
+        <main class="w100 h100 d-flex fl-grow1 ai-stretch ps-relative">
+            <!-- flash messages -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="s-banner s-banner__{{ category }}" style="position: fixed; top: 52px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <section class="flex--item10 px16 py24">
+                {% block content %}
+                {% endblock %}
+            </section>
+
+            <aside class="d-flex fd-column flex--item3 px16 py24 bl bls-solid bc-black-200">
+                <div class="s-sidebarwidget">
+                    <h2 class="s-sidebarwidget--header s-sidebarwidget__small-bold-text">
+                        Stats
+                    </h2>
+                    <table class="s-sidebarwidget--content s-sidebarwidget__items">
+                        <tr class="s-sidebarwidget--item">
+                            <td class="tc-black-350">Users</td>
+                            <td>{{ user_count }}</td>
+                        </tr>
+                        <tr class="s-sidebarwidget--item">
+                            <td class="tc-black-350">Questions</td>
+                            <td>{{ question_count }}</td>
+                        </tr>
+                        <tr class="s-sidebarwidget--item">
+                            <td class="tc-black-350">Answers</td>
+                            <td>{{ answer_count }}</td>
+                        </tr>
+<!--                        <tr class="s-sidebarwidget&#45;&#45;item">-->
+<!--                            <td class="tc-black-350">Comments</td>-->
+<!--                            <td>{{ comment_count }}</td>-->
+<!--                        </tr>-->
+                        <tr class="s-sidebarwidget--item">
+                            <td class="tc-black-350">Votes</td>
+                            <td>{{ vote_count }}</td>
+                        </tr>
+                    </table>
+                    <h2 class="s-sidebarwidget--header s-sidebarwidget__small-bold-text">
+                        Popular tags
+                    </h2>
+                    <ul class="s-sidebarwidget--content s-sidebarwidget__items">
+                        <li class="s-sidebarwidget--item d-flex g4">
+                            <div class="d-flex g4" style="flex-wrap: wrap;">
+                                {% for t in popular_tags %}
+                                    <a class="s-tag s-tag__sm" href="#">{{ t }}</a>
+                                {% else %}
+                                    <p>No popular tags.</p>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    </ul>
+                    <h2 class="s-sidebarwidget--header s-sidebarwidget__small-bold-text">
+                        Most answers
+                    </h2>
+                    <div class="s-sidebarwidget--content s-sidebarwidget__items">
+                        <style>
+                            ._pop_user_av {
+                                width: 18px;
+                                height: 18px;
+                            }
+                        </style>
+                        {% for u in popular_users %}
+                            <div class="s-sidebarwidget--item">
+                                {{ Avatar(u, "_pop_user_av bar-sm mr8") }}
+                                <span class="break-word"><strong>{{ u.username }}</strong> ({{ u.answer_count }})</span>
+                            </div>
+                        {% else %}
+                            <p>No popular users.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <span class="fl-grow1"></span>
+                <p class="fs-caption mt64" style="opacity: 0.65;">Made by team <strong>Segfault</strong></p>
+            </aside>
+        </main>
+
+        <!-- icons -->
+        <script src="{{ url_for('static', filename='js/icons.js') }}"></script>
+        <!-- flash -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const flashes = document.querySelectorAll(".s-banner");
+                if (flashes.length > 0) {
+                    setTimeout(() => {
+                        flashes.forEach(x => {
+                            x.style.transition = "opacity 0.4s ease";
+                            x.style.opacity = "0";
+                            setTimeout(() => x.remove(), 400);
+                        });
+                    }, 2500);
+                }
+            });
+        </script>
+    </body>
+</html>

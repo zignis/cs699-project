@@ -8,6 +8,10 @@
         {{ question_count }} questions
     </div>
     <div class="s-btn-group flex--item">
+        <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'personalized' }}"
+           href="/?tab=personalized">
+            <span class="s-btn--text" data-text="Recommended">Recommended</span>
+        </a>
         <a class="s-btn s-btn__muted s-btn__sm {{ 'is-selected' if tab == 'newest' }}" href="/?tab=newest">
             <span class="s-btn--text" data-text="Newest">Newest</span>
         </a>

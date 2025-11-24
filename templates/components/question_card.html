@@ -50,7 +50,7 @@
         <div class="s-post-summary--meta">
             <div class="s-post-summary--meta-tags">
                 {% for tag in q.tags %}
-                <a class="s-tag" href="#">{{ tag.name }}</a>
+                <a class="s-tag" href="{{ url_for('tag.search_tag', tag_name=tag.name) }}">{{ tag.name }}</a>
                 {% endfor %}
             </div>
 

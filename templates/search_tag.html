@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "components/question_card.html" import QuestionCard with context %}
+{% block title %}Search results{% endblock %}
+{% block content %}
+
+<div class="s-page-title mb24">
+    <h1 class="s-page-title--header">
+        Search results for "<strong>{{ q }}</strong>"
+    </h1>
+</div>
+
+{% if questions %}
+    {% for q in questions %}
+        {{ QuestionCard(q) }}
+    {% endfor %}
+{% else %}
+    <p class="fs-body2">No results found</p>
+{% endif %}
+
+{% endblock %}

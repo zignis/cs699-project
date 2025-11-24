@@ -3,7 +3,7 @@ from flask_login import LoginManager
 from models import User
 from extensions import db
 from config import Config
-from routes import main, auth, qna, vote, user
+from routes import main, auth, qna, vote, user, tag
 from models import Question, Answer, Vote, Tag
 
 app = Flask(__name__)
@@ -22,6 +22,7 @@ app.register_blueprint(auth)
 app.register_blueprint(qna)
 app.register_blueprint(vote)
 app.register_blueprint(user)
+app.register_blueprint(tag)
 
 @app.context_processor
 def inject_sidebar_data():

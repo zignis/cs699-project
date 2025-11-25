@@ -33,15 +33,15 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Register')
 
-    # Custom validator for email: enforces @iitb.ac.in and uniqueness
+   
     def validate_email(self, field):
         email = (field.data or '').strip().lower()
 
-        # enforce domain
+    
         if not email.endswith('@iitb.ac.in'):
             raise ValidationError('Please register with Institute email address')
 
-        # import User here to avoid circular imports if any
+      
         from models import User
         if User.query.filter_by(email=email).first():
             raise ValidationError('This email is already registered.')

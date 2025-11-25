@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp, ValidationError
+from models import User
 
 class RegisterForm(FlaskForm):
     username = StringField(
@@ -33,15 +34,11 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Register')
 
-   
     def validate_email(self, field):
-        email = (field.data or '').strip().lower()
-
+        email = (field.data or "").strip().lower()
     
         if not email.endswith('@iitb.ac.in'):
-            raise ValidationError('Please register with Institute email address')
+            raise ValidationError("Please register with institute email address")
 
-      
-        from models import User
         if User.query.filter_by(email=email).first():
-            raise ValidationError('This email is already registered.')
+            raise ValidationError("This email is already registered")

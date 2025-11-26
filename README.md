@@ -18,7 +18,9 @@ A web application where users can ask questions, give answers, vote, and tag con
 pip install -r requirements.txt
 ```
 
-- make changes as needed in config.py
+- setup a PostgreSQL database instance, create a database named as `qna`, and provide its connection URL in `config.py`.
+- make changes as needed in `config.py`
+  
 - create tables:
 ```shell
 python create_db.py

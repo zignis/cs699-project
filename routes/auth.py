@@ -8,10 +8,6 @@ from forms import RegisterForm, LoginForm
 
 auth = Blueprint('auth', __name__)   
 
-
-# --------------------------
-# REGISTER
-# --------------------------
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -29,10 +25,8 @@ def register():
         return redirect(url_for('auth.login'))
     return render_template('register.html', form=form)
 
+#
 
-# --------------------------
-# LOGIN
-# --------------------------
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -44,10 +38,8 @@ def login():
         flash('Invalid credentials', 'danger')
     return render_template('login.html', form=form)
 
+#
 
-# --------------------------
-# LOGOUT
-# --------------------------
 @auth.route('/logout')
 @login_required
 def logout():
